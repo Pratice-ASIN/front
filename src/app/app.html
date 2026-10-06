@@ -1,0 +1,168 @@
+<header class="topbar">
+  <div class="brand">
+    <span class="seal" aria-hidden="true">T</span>
+    <div>
+      <h1>Timbre fiscal</h1>
+      <p>Demandes d'actes et paiement par mobile money</p>
+    </div>
+  </div>
+  <form class="user" (submit)="$event.preventDefault(); switchUser()">
+    <label for="user">Usager</label>
+    <input id="user" [value]="userInput()" (input)="userInput.set(inputValue($event))" autocomplete="off" />
+    <button type="submit" class="secondary">Changer</button>
+  </form>
+</header>
+
+<main class="layout">
+  <!-- ================================================= Left column -->
+  <section class="column">
+    <article class="card">
+      <h2>Nouvelle demande</h2>
+      <form (submit)="$event.preventDefault(); createRequest()">
+        <label for="type">Type d'acte</label>
+        <select id="type" [value]="selectedType()" (change)="selectedType.set($any(inputValue($event)))">
+          @for (t of documentTypes(); track t.code) {
+            <option [value]="t.code">{{ t.label }} : {{ t.unitPrice | number }} FCFA</option>
+          }
+        </select>
+
+        <label for="copies">Nombre de copies</label>
+        <input id="copies" type="number" min="1" max="20" [value]="copies()" (input)="copies.set(inputNumber($event))" />
+
+        <p class="hint">Le montant est calculé par le service (tarif × copies + 100 FCFA de frais).</p>
+        <button type="submit" [disabled]="creating()">
+          {{ creating() ? 'Enregistrement…' : 'Enregistrer la demande' }}
+        </button>
+      </form>
+      @if (requestError(); as e) {
+        <p class="alert error">{{ e }}</p>
+      }
+    </article>
+
+    <article class="card">
+      <div class="card-title">
+        <h2>Mes demandes</h2>
+        <button type="button" class="link" (click)="loadRequests()">Actualiser</button>
+      </div>
+      @if (requests().length === 0) {
+        <p class="empty">Aucune demande pour l'instant.</p>
+      } @else {
+        <ul class="list">
+          @for (r of requests(); track r.id) {
+            <li>
+              <button type="button" class="row" [class.active]="r.id === selectedId()" (click)="select(r)">
+                <span class="row-text">
+                  <strong>{{ r.documentLabel }}</strong>
+                  <small>{{ r.copies }} copie(s) · {{ r.createdAt | date: 'dd/MM HH:mm' }}</small>
+                </span>
+                <span class="row-side">
+                  <span class="amount">{{ r.amountDue | number }} F</span>
+                  <span class="badge" [attr.data-status]="r.status">{{ requestStatusLabel(r) }}</span>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </article>
+  </section>
+
+  <!-- ================================================= Right column -->
+  <section class="column">
+    @if (selected(); as r) {
+      <article class="card">
+        <div class="card-title">
+          <h2>{{ r.documentLabel }}</h2>
+          <span class="badge" [attr.data-status]="r.status">{{ requestStatusLabel(r) }}</span>
+        </div>
+
+        <dl class="summary">
+          <div><dt>Tarif unitaire</dt><dd>{{ r.unitPrice | number }} FCFA</dd></div>
+          <div><dt>Copies</dt><dd>× {{ r.copies }}</dd></div>
+          <div><dt>Frais de service</dt><dd>{{ r.serviceFee | number }} FCFA</dd></div>
+          <div class="total"><dt>Montant à payer</dt><dd>{{ r.amountDue | number }} FCFA</dd></div>
+        </dl>
+
+        @if (r.status === 'UNPAID') {
+          <form class="payment-form" (submit)="$event.preventDefault(); pay()">
+            <fieldset>
+              <legend>Opérateur</legend>
+              <div class="operators">
+                @for (o of operators; track o) {
+                  <label class="choice" [class.checked]="operator() === o">
+                    <input type="radio" name="operator" [value]="o" [checked]="operator() === o"
+                           (change)="operator.set(o)" />
+                    {{ operatorLabel(o) }}
+                  </label>
+                }
+              </div>
+            </fieldset>
+
+            <label for="phone">Numéro mobile money</label>
+            <input id="phone" inputmode="numeric" maxlength="10" placeholder="01XXXXXXXX"
+                   [value]="phoneNumber()" (input)="phoneNumber.set(inputValue($event))"
+                   [class.invalid]="phoneNumber().length > 0 && !phoneNumberValid()" />
+            @if (phoneNumber().length > 0 && !phoneNumberValid()) {
+              <p class="hint error-text">10 chiffres commençant par 01.</p>
+            }
+
+            <button type="submit" [disabled]="sending() || !phoneNumberValid()">
+              {{ sending() ? 'Envoi…' : 'Payer ' + (r.amountDue | number) + ' FCFA' }}
+            </button>
+            <p class="hint">Simulateur : un numéro finissant par 00 échoue, par 99 ne reçoit jamais de réponse.</p>
+          </form>
+        }
+
+        @if (notice(); as n) {
+          <p class="alert info">{{ n }}</p>
+        }
+        @if (paymentError(); as e) {
+          <p class="alert error">{{ e }}</p>
+        }
+      </article>
+
+      @if (tracked(); as p) {
+        <article class="card tracking" [attr.data-status]="p.status">
+          <div class="card-title">
+            <h2>Suivi du paiement</h2>
+            @if (p.status === 'PENDING') {
+              <span class="pulse" aria-label="En attente du résultat"></span>
+            }
+          </div>
+          <p class="message">{{ p.message }}</p>
+          @if (p.reason) {
+            <p class="reason">Motif : {{ p.reason }}</p>
+          }
+          <p class="hint">{{ operatorLabel(p.operator) }} · {{ p.phoneNumber }} · {{ p.amount | number }} FCFA</p>
+        </article>
+      }
+
+      <article class="card">
+        <h2>Tentatives de paiement</h2>
+        @if (history().length === 0) {
+          <p class="empty">Aucune tentative.</p>
+        } @else {
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Opérateur</th><th>Numéro</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+              @for (p of history(); track p.id) {
+                <tr>
+                  <td>{{ p.createdAt | date: 'dd/MM HH:mm:ss' }}</td>
+                  <td>{{ operatorLabel(p.operator) }}</td>
+                  <td>{{ p.phoneNumber }}</td>
+                  <td><span class="badge" [attr.data-status]="p.status">{{ paymentStatusLabel(p) }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </article>
+    } @else {
+      <article class="card no-selection">
+        <p>Sélectionnez une demande pour la payer et suivre son paiement.</p>
+      </article>
+    }
+  </section>
+</main>

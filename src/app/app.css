@@ -1,0 +1,425 @@
+/* ---------------------------------------------------------------- top bar */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.brand h1 {
+  font-size: 1.15rem;
+}
+
+.brand p {
+  margin: 2px 0 0;
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+
+.seal {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 3px var(--accent-dark), inset 0 0 0 5px #f2c94c;
+}
+
+.user {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.user label {
+  margin: 0;
+}
+
+.user input {
+  width: 150px;
+}
+
+/* ---------------------------------------------------------------- layout */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 20px;
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+@media (max-width: 820px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.card h2 {
+  font-size: 1rem;
+  margin-bottom: 14px;
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.card-title h2 {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- forms */
+label,
+legend {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+input,
+select {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+input.invalid {
+  border-color: var(--red);
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+form > button[type="submit"] {
+  width: 100%;
+  margin-top: 16px;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: var(--grey-soft);
+  color: var(--ink);
+}
+
+button.link {
+  background: none;
+  color: var(--accent);
+  padding: 4px 6px;
+}
+
+button.link:hover {
+  background: var(--accent-soft);
+}
+
+.operators {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.choice {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.choice input {
+  width: auto;
+  accent-color: var(--accent);
+}
+
+.choice.checked {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.hint {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.error-text {
+  color: var(--red);
+}
+
+.alert {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+}
+
+.alert.error {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.alert.info {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+/* ---------------------------------------------------------------- list */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  font-weight: 400;
+}
+
+.row:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.row.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.row-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.row-text small {
+  color: var(--ink-muted);
+}
+
+.row-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.empty,
+.no-selection p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.no-selection {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- badges */
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--grey-soft);
+  color: var(--ink-muted);
+}
+
+.badge[data-status="PAID"],
+.badge[data-status="SUCCEEDED"] {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.badge[data-status="PAYMENT_PENDING"],
+.badge[data-status="PENDING"] {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.badge[data-status="FAILED"],
+.badge[data-status="EXPIRED"] {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+/* ---------------------------------------------------------------- summary */
+.summary {
+  margin: 0 0 6px;
+}
+
+.summary div {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 0.9rem;
+}
+
+.summary dt {
+  color: var(--ink-muted);
+}
+
+.summary dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary .total {
+  border-bottom: 0;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.summary .total dt {
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------- tracking */
+.tracking {
+  border-left: 4px solid var(--amber);
+}
+
+.tracking[data-status="SUCCEEDED"] {
+  border-left-color: var(--accent);
+}
+
+.tracking[data-status="FAILED"],
+.tracking[data-status="EXPIRED"] {
+  border-left-color: var(--red);
+}
+
+.tracking .message {
+  margin: 0;
+  font-weight: 600;
+}
+
+.tracking .reason {
+  margin: 6px 0 0;
+  color: var(--red);
+  font-size: 0.9rem;
+}
+
+.pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--amber);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------- table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+th {
+  color: var(--ink-muted);
+  font-weight: 600;
+}
